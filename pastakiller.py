@@ -27,7 +27,6 @@ class PastaKiller(object):
         """defines exit function"""
         import os
         _ = frame
-        self.save()
         self.logger.info("Exited gracefully with signal %s", signum)
         os._exit(os.EX_OK)
         return
