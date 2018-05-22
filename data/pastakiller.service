@@ -1,0 +1,14 @@
+[Unit]
+Description=pastakiller
+After=multi-user.target
+
+[Service]
+Type=simple
+EnvironmentFile=/var/lib/pastakiller/data/variables.env
+ExecStart=/usr/bin/python3.6 /var/lib/pastakiller/service.py
+User=root
+WorkingDirectory=/var/lib/pastakiller
+Restart=yes
+
+[Install]
+WantedBy=multi-user.target
