@@ -21,6 +21,8 @@ class PastaKiller(object):
         self.old_comments = []
         self.minimum_length = minimum_length
         self.match_threshold = match_threshold
+        self.ignored_strings = ignored_strings
+        self.mods = mods
         self.logger.info("Initialized")
 
     def exit(self, signum, frame):
@@ -32,6 +34,7 @@ class PastaKiller(object):
         return
 
     def kill(self):
+        import prawcore
         try:
             for comment in self.subreddit.stream.comments():
                 if "discussion_thread" in comment.permalink:
@@ -41,7 +44,7 @@ class PastaKiller(object):
                             if similarity > self.match_threshold and len(comment.body.split()) > self.minimum_length and not any(s in comment.body for s in self.ignored_strings) and comment.author not in self.mods:
                                 comment.mod.remove()
                                 comment.author.message("Your comment was removed", "Your comment was removed as it was {}% similar to {}, thus deemed likely to be a copypasta.\n\nYou may appeal this decision by [sending the moderators a message](https://www.reddit.com/message/compose?to=%2Fr%2Fneoliberal).".format(similarity, old_comment.permalink))
-                                self.logger.debug("Copypasta", similarity, comment.permalink, old_comment.permalink, sep='\n')
+                                self.logger.debug("\n".join(["Copypasta", str(similarity), str(comment.permalink), str(old_comment.permalink)]))
                                 break
 
                     len_old_comments = len(self.old_comments)
@@ -49,15 +52,15 @@ class PastaKiller(object):
                         n = len_old_comments - 201
                         self.old_comments = self.old_comments[n:]
                     self.old_comments.append(comment)
-        except praw.exceptions.ServerError:
+        except prawcore.exceptions.ServerError:
             self.logger.error("Server error: Sleeping for 1 minute.")
             sleep(60)
-        except praw.exceptions.ResponseException:
+        except prawcore.exceptions.ResponseException:
             self.logger.error("Response error: Sleeping for 1 minute.")
             sleep(60)
-        except praw.exceptions.RequestException:
+        except prawcore.exceptions.RequestException:
             self.logger.error("Request error: Sleeping for 1 minute.")
             sleep(60)
         except Exception as e:
-            self.logger.error("Unhandled exception: Sleeping for 1 minute.\n{e}")
+            self.logger.error(f"Unhandled exception: Sleeping for 1 minute.\n{e}")
             sleep(60)
