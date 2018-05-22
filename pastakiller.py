@@ -47,15 +47,15 @@ class PastaKiller(object):
                     len_old_comments = len(self.old_comments)
                     if len_old_comments > 201:
                         n = len_old_comments - 201
-                        self.old_comments = old_comments[n:]
+                        self.old_comments = self.old_comments[n:]
                     self.old_comments.append(comment)
-        except prawcore.exceptions.ServerError:
+        except praw.exceptions.ServerError:
             self.logger.error("Server error: Sleeping for 1 minute.")
             sleep(60)
-        except prawcore.exceptions.ResponseException:
+        except praw.exceptions.ResponseException:
             self.logger.error("Response error: Sleeping for 1 minute.")
             sleep(60)
-        except prawcore.exceptions.RequestException:
+        except praw.exceptions.RequestException:
             self.logger.error("Request error: Sleeping for 1 minute.")
             sleep(60)
         except Exception as e:
