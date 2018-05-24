@@ -21,7 +21,6 @@ def main():
         os.environ["pastakiller_subreddit"],
         minimum_length = int(os.environ["pastakiller_minlen"]),
         match_threshold = int(os.environ["pastakiller_matchthreshold"]),
-        mods = os.environ["pastakiller_mods"].split(","),
         ignored_strings = os.environ["pastakiller_ignored_strings"].split(",")
     )
 
